@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: 'Arial', sans-serif; /* Changed Font */
+    background: url('Stopwatch.jpg') no-repeat center center fixed; 
+    background-size: cover;
+    color: #f7f4f5; 
+}
+
+header {
+    width: 100%;
+    background: rgba(100, 100, 100, 0.8); /* Changed Background Color */
+    padding: 20px 0;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2.5em;
+    color: #FFEBEE; 
+    font-weight: bold; /* Added Font Weight */
+    letter-spacing: 1.5px; /* Added Letter Spacing */
+}
+
+main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.stopwatch {
+    text-align: center;
+    background: rgba(152, 197, 245, 0.9); 
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+#display {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    color: #B71C1C;
+    animation: fade-in 1s ease-in; /* Added Animation */
+}
+
+@keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.controls button {
+    font-size: 1em;
+    padding: 10px 20px;
+    margin: 10px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    color: white;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+#start {
+    background-color: #66BB6A; /* Changed Color */
+}
+
+#start:hover {
+    background-color: #388E3C; /* Changed Color */
+}
+
+#pause {
+    background-color: #FFA726; /* Changed Color */
+}
+
+#pause:hover {
+    background-color: #F57C00; /* Changed Color */
+}
+
+#reset {
+    background-color: #EF5350; /* Changed Color */
+}
+
+#reset:hover {
+    background-color: #C62828; /* Changed Color */
+}
+
+#lap {
+    background-color: #42A5F5; /* Changed Color */
+}
+
+#lap:hover {
+    background-color: #1E88E5; /* Changed Color */
+}
+
+#laps {
+    margin-top: 20px;
+    text-align: left;
+}
+
+#laps div {
+    margin: 5px 0;
+    background: rgba(255, 205, 210, 0.9); 
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Unique Stopwatch</title> <!-- Changed Title -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    
+    <header>
+        <h1>My Stopwatch</h1> <!-- Changed Header Text -->
+    </header>
+
+    <div class="stopwatch">
+        <div id="display">00:00:00.000</div>
+        <div class="controls">
+            <button id="start">Start</button>
+            <button id="pause">Pause</button>
+            <button id="reset">Reset</button>
+            <button id="lap">Lap</button>
+        </div>
+        <div id="laps"></div>
+    </div>
+    <script>
+let startTime;
+let updatedTime;
+let difference;
+let tInterval;
+let savedTime = 0;
+let running = false;
+let lapNumber = 0;
+
+const display = document.getElementById('display');
+const startButton = document.getElementById('start');
+const pauseButton = document.getElementById('pause');
+const resetButton = document.getElementById('reset');
+const lapButton = document.getElementById('lap');
+const laps = document.getElementById('laps');
+
+startButton.addEventListener('click', start);
+pauseButton.addEventListener('click', pause);
+resetButton.addEventListener('click', reset);
+lapButton.addEventListener('click', lap);
+
+function start() {
+    if (!running) {
+        startTime = new Date().getTime() - savedTime;
+        tInterval = setInterval(getShowTime, 1);
+        running = true;
+    }
+}
+
+function pause() {
+    if (running) {
+        clearInterval(tInterval);
+        savedTime = new Date().getTime() - startTime;
+        running = false;
+    }
+}
+
+function reset() {
+    clearInterval(tInterval);
+    savedTime = 0;
+    running = false;
+    display.innerHTML = '00:00:00.000';
+    laps.innerHTML = '';
+    lapNumber = 0;
+}
+
+function lap() {
+    if (running) {
+        lapNumber++;
+        const lapTime = display.innerHTML;
+        const lapElement = document.createElement('div');
+        lapElement.innerHTML = `Lap ${lapNumber}: ${lapTime}`;
+        laps.appendChild(lapElement);
+    }
+}
+
+function getShowTime() {
+    updatedTime = new Date().getTime();
+    difference = updatedTime - startTime;
+    
+    const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+    const milliseconds = Math.floor((difference % 1000));
+    
+    display.innerHTML =
+        (hours > 9 ? hours : '0' + hours) + ':' +
+        (minutes > 9 ? minutes : '0' + minutes) + ':' +
+        (seconds > 9 ? seconds : '0' + seconds) + '.' +
+        (milliseconds > 99 ? milliseconds : milliseconds > 9 ? '0' + milliseconds : '00' + milliseconds);
+}
+</script>
+</body>
+</html>
